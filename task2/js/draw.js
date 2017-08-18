@@ -6,6 +6,7 @@ const hslMax = 359;
 const hslMin = 0;
 const thickMin = 5;
 const thickMax = 100;
+var thickDirection = false;
 
 let thick, color;
 startCanvas();
@@ -24,25 +25,34 @@ function startCanvas() {
     thick = thickMax - 1;
     color = getRandomInt(hslMin, hslMax);
 }
-
-function getLine(min, max, current, key) {
-    if (!key) {
+function changeLineWidth(min, max, current){
+    if(thickDirection){
         if (current < max) {
             current++
         }
         else {
-            current = min;
+            thickDirection = !thickDirection;
         }
-        return current;
     }
+
     else {
-        if (current > min) {
-            current--
+        if(current > min){
+            current --;
         }
         else {
-            current = max;
+            thickDirection = !thickDirection;
         }
-        return current;
+    }
+    return current;
+}
+
+function getLine(min, max, current, key) {
+    if (!key) {
+        return changeLineWidth(min, max, current);
+    }
+    else {
+        thickDirection = !thickDirection;
+        return changeLineWidth(min, max, current);
     }
 
 }
@@ -62,12 +72,19 @@ function stopDraw() {
     document.removeEventListener('mousemove', draw);
 }
 
-function setLine(e) {
-    ctx.beginPath();
+function setLineProperty(e){
     ctx.strokeStyle = 'hsl(' + color + ',100%,50%)';
-    document.addEventListener('mousemove', draw);
     thick = getLine(thickMin, thickMax, thick, e.shiftKey);
     color = getLine(hslMin, hslMax, color, e.shiftKey);
+    console.log('color', color);
+    console.log('thick', thick);
+}
+
+function setLine(e) {
+    ctx.beginPath();
+    document.addEventListener('mousemove', draw);
+    thick = getLine(thickMin, thickMax, thick, e.shiftKey);
+    setLineProperty(e)
 }
 function draw(e) {
     let x = e.offsetX;
@@ -75,6 +92,7 @@ function draw(e) {
     ctx.lineTo(x, y);
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
+    setLineProperty(e);
     ctx.lineWidth = thick;
     ctx.stroke();
 }
