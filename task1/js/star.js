@@ -1,6 +1,8 @@
 const canvas = document.querySelector('canvas');
-const skyWidth = canvas.width;
-const skyHeight = canvas.height;
+const skyWidth = 500;
+const skyHeight = 300;
+canvas.width = skyWidth;
+canvas.height = skyHeight;
 const ctx = canvas.getContext('2d');
 const starsColors = ['#ffffff', '#ffe9c4', '#d4fbff'];
 const starBrightness = {
